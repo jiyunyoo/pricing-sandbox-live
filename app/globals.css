@@ -1,4 +1,5 @@
 :root {
+  --font-noto-sans-kr: 'Noto Sans KR', -apple-system, system-ui, sans-serif;
   --paper: #FBF7EF;
   --paper-2: #F5EFE2;
   --ink: #1A1816;
