@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# pricing-sandbox · Live OpenAI Persona Sandbox
 
-## Getting Started
+KAIST IMMS 졸업 프로젝트 — **호모 실리쿠스 · 페르소나 시뮬레이션 샌드박스**.
 
-First, run the development server:
+16개 KOSTAT·BOK·KB 기반 한국 페르소나가 `gpt-4o-mini` LLM 에이전트로 가격 인상을 평가합니다. 탐색재(Search) vs 경험재(Experience) 가격 탄력성, 커뮤니티 토론 후 행동 변화(WOM_m), McNemar χ² 등 측정.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+**Live:** https://pricing-sandbox-live.vercel.app
+
+## Architecture
+
+```
+Browser UI (Next.js client)
+    │ POST /api/simulate
+    ▼
+Vercel Serverless Function
+    │ × N parallel OpenAI calls (Structured Outputs)
+    ▼
+gpt-4o-mini  →  Korean rationale per persona
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+API key is server-side only; the browser never sees it.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Next.js 16** (App Router, TypeScript, no Tailwind)
+- **OpenAI SDK** (`gpt-4o-mini`, JSON Schema strict mode)
+- **Zod** for input validation
+- **Vercel** serverless deploy
 
-## Learn More
+## Local development
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+git clone https://github.com/IMMS-graduation-project/pricing-sandbox.git
+cd pricing-sandbox
+npm install
+echo "OPENAI_API_KEY=sk-..." > .env.local
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Open http://localhost:3000.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deploy
 
-## Deploy on Vercel
+1. Push to GitHub
+2. Import on https://vercel.com/new
+3. Add `OPENAI_API_KEY` env var (Production, Preview, Development)
+4. Redeploy after env changes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Key files
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| File | Role |
+|---|---|
+| `app/page.tsx` + `components/Sandbox.tsx` | UI (hero, console, persona grid, results) |
+| `lib/personas.ts` | 16 archetypes + 4-layer data |
+| `lib/products.ts` | 12-product catalog (6 search + 6 experience) + custom |
+| `lib/instances.ts` | Display-only ×2 sampling per archetype (32 cards) |
+| `lib/avatars.ts` | Procedural inline-SVG avatar generator |
+| `lib/openai.ts` | OpenAI client + Korean persona prompts |
+| `app/api/decide/route.ts` | One persona → one decision |
+| `app/api/simulate/route.ts` | Orchestrates 16 archetypes + discussion + metrics |
+
+## Metrics
+
+- `ε_sim = (%ΔQ) / (%ΔP)` — price elasticity
+- `WOM_m = ΔQ_post / ΔQ_pre` — word-of-mouth multiplier
+- McNemar χ² for pre/post discussion flip significance
+
+탐색재 가설: WOM_m > 1 (정보 캐스케이드 → 거부 증폭).
+경험재 가설: WOM_m < 1 (밴드왜건 → 거부 완화).
