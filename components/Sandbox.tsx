@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { avatarSVG } from '@/lib/avatars';
+import { avatarURL } from '@/lib/avatars';
 import { PRODUCTS, SEARCH_PRODUCTS, EXPERIENCE_PRODUCTS, defaultProduct } from '@/lib/products';
 import { dominantValue } from '@/lib/personas';
 import { makeInstances, avatarPersona, type PersonaInstance } from '@/lib/instances';
@@ -348,7 +348,7 @@ export default function Sandbox({ personas }: SandboxProps) {
                   aria-label={`${p.name} ${inst.label} 상세 보기`}
                 >
                   <span className="instance-label">{inst.label}</span>
-                  <div className="avatar" dangerouslySetInnerHTML={{ __html: avatarSVG(avatarPersona(inst)) }} />
+                  <div className="avatar"><img src={avatarURL(avatarPersona(inst))} alt={`${p.name} ${inst.label} 아바타`} /></div>
                   <div className="persona-name">{p.name} <span style={{ fontWeight: 400, color: 'var(--ink-mute)', fontSize: 12 }}>· {p.age}</span></div>
                   <div className="persona-archetype">{p.archetype}</div>
                   <div className="persona-meta">
@@ -472,7 +472,7 @@ function ResultsView({ result, personas }: { result: SimulateResponse; personas:
               return (
                 <tr key={d.personaId}>
                   <td>
-                    <span className="mini-avatar" dangerouslySetInnerHTML={{ __html: avatarSVG(p) }} />
+                    <span className="mini-avatar"><img src={avatarURL(p)} alt={`${p.name} 아바타`} /></span>
                     <strong>{p.name}</strong>
                     <div style={{ fontSize: 11, color: 'var(--ink-mute)', marginLeft: 42, marginTop: -2 }}>{p.archetype}</div>
                   </td>
@@ -513,7 +513,7 @@ function ArchetypeModal({ persona, onClose }: { persona: Persona; onClose: () =>
       <div className="modal" onClick={e => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose} aria-label="닫기">×</button>
         <div className="modal-header">
-          <div className="modal-avatar" dangerouslySetInnerHTML={{ __html: avatarSVG(persona) }} />
+          <div className="modal-avatar"><img src={avatarURL(persona)} alt={`${persona.name} 아바타`} /></div>
           <div>
             <div className="modal-name">{persona.name} ({persona.nameEn})</div>
             <div className="modal-archetype">{persona.archetype} · {persona.gen}세대</div>
