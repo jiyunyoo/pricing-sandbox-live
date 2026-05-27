@@ -11,15 +11,9 @@ function hashCode(str: string): number {
   return Math.abs(h);
 }
 
-/**
- * DiceBear Avataaars portrait URL, seeded deterministically from the persona id+name.
- * Older personas get gray hair; biological-sex hint nudges hair length without
- * over-constraining (DiceBear still varies expressions/accessories per seed).
- */
+/** DiceBear Notionists portrait URL, seeded deterministically from persona id+name. */
 export function avatarURL(persona: Persona): string {
   const seed = encodeURIComponent(persona.id + persona.name);
-  const isElderly = persona.gen === 'Boomer';
-  const isFemale = persona.sex === 'F';
   const bg = BG_PALETTE[hashCode(persona.id) % BG_PALETTE.length];
 
   const params = new URLSearchParams({
@@ -29,20 +23,5 @@ export function avatarURL(persona: Persona): string {
     radius: '50',
   });
 
-  // Hair color: gray for elderly, dark otherwise
-  if (isElderly) {
-    params.append('hairColor', 'a8a29b,b8b2ac,c5bfb9');
-    params.append('facialHairProbability', '0');
-  } else {
-    params.append('hairColor', '2c1b18,4a312c,724133,a55728');
-  }
-
-  // Hair length hint by sex (DiceBear still varies style within these sets)
-  if (isFemale) {
-    params.append('top', 'bigHair,bob,bun,curly,curvy,dreads,straight01,straight02,straightAndStrand');
-  } else {
-    params.append('top', 'shortCurly,shortFlat,shortRound,shortWaved,sides,theCaesar,theCaesarAndSidePart');
-  }
-
-  return `https://api.dicebear.com/9.x/avataaars/svg?${params.toString()}`;
+  return `https://api.dicebear.com/9.x/notionists/svg?${params.toString()}`;
 }
