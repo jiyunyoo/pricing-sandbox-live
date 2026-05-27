@@ -20,7 +20,7 @@
 html, body {
   background: var(--paper);
   color: var(--ink);
-  font-family: 'Noto Sans KR', -apple-system, system-ui, sans-serif;
+  font-family: var(--font-noto-sans-kr), -apple-system, system-ui, sans-serif;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -29,8 +29,8 @@ html, body {
 button, input, select, textarea { font-family: inherit; color: inherit; }
 button { cursor: pointer; background: none; border: none; }
 
-.mono { font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace; }
-.serif { font-family: 'Fraunces', 'Times New Roman', serif; }
+.mono { font-family: var(--font-ibm-plex-mono), ui-monospace, SFMono-Regular, monospace; }
+.serif { font-family: var(--font-fraunces), 'Times New Roman', serif; }
 
 /* ── Header ───────────────────────────────────────── */
 .app-header {
@@ -43,10 +43,10 @@ button { cursor: pointer; background: none; border: none; }
 .kicker {
   font-size: 10px; letter-spacing: 6px; color: var(--gold-deep);
   font-weight: 600; margin-bottom: 16px; text-transform: uppercase;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
 }
 .app-title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-fraunces), serif;
   font-size: 44px; font-weight: 600;
   color: var(--ink);
   letter-spacing: -0.02em;
@@ -74,7 +74,7 @@ main {
   border-left: 3px solid var(--gold);
 }
 .hero-banner h2 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-fraunces), serif;
   font-size: 20px; color: var(--ink);
   margin-bottom: 8px;
   font-weight: 600;
@@ -97,7 +97,7 @@ main {
   padding: 24px;
 }
 .panel h3 {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 11px;
   letter-spacing: 3px;
   color: var(--gold-deep);
@@ -119,7 +119,7 @@ main {
 
 /* Product groups */
 .product-group-label {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 10px;
   letter-spacing: 2px;
   color: var(--ink-mute);
@@ -161,7 +161,7 @@ main {
 .product-chip-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .product-chip-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .product-chip-price {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 10px; opacity: 0.7;
 }
 
@@ -229,12 +229,12 @@ main {
   margin-bottom: 8px;
 }
 .slider-label {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 10px; letter-spacing: 2px;
   color: var(--ink-mute); text-transform: uppercase;
 }
 .slider-value {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-fraunces), serif;
   font-size: 28px; font-weight: 600;
   color: var(--gold-deep);
 }
@@ -259,7 +259,7 @@ input[type="range"] {
 }
 .popselect select {
   padding: 4px 8px; border: 1px solid var(--line); border-radius: 4px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 12px;
   background: white;
 }
@@ -275,7 +275,7 @@ input[type="range"] {
   font-weight: 600;
   letter-spacing: 1px;
   transition: all 0.15s;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
 }
 .btn-run:hover:not(:disabled) {
   background: var(--navy-deep);
@@ -299,7 +299,7 @@ input[type="range"] {
   margin-bottom: 56px;
 }
 .section-title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-fraunces), serif;
   font-size: 24px; font-weight: 600;
   margin-bottom: 4px;
 }
@@ -338,7 +338,7 @@ input[type="range"] {
   position: absolute;
   top: 8px;
   right: 10px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 10px;
   font-weight: 700;
   color: var(--ink-mute);
@@ -398,13 +398,13 @@ input[type="range"] {
 }
 .modal-avatar svg { width: 100%; height: 100%; display: block; }
 .modal-name {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-fraunces), serif;
   font-size: 22px;
   font-weight: 600;
   color: var(--ink);
 }
 .modal-archetype {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 11px;
   letter-spacing: 2px;
   color: var(--gold-deep);
@@ -432,7 +432,7 @@ input[type="range"] {
 .detail-block.gold { border-left-color: var(--gold); }
 .detail-block.green { border-left-color: var(--green); }
 .detail-block h4 {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 10px;
   letter-spacing: 2px;
   color: var(--ink);
@@ -493,12 +493,12 @@ input[type="range"] {
 }
 .avatar svg { width: 100%; height: 100%; display: block; }
 .persona-name {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-fraunces), serif;
   font-size: 16px; font-weight: 600;
   color: var(--ink); margin-bottom: 2px;
 }
 .persona-archetype {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 10px; letter-spacing: 1px;
   color: var(--gold-deep); margin-bottom: 6px;
   text-transform: uppercase;
@@ -540,7 +540,7 @@ input[type="range"] {
   justify-content: center;
   gap: 32px;
   margin-top: 16px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 11px;
   color: var(--ink-mute);
 }
@@ -558,7 +558,7 @@ input[type="range"] {
   margin-bottom: 16px;
 }
 .flow-stage h4 {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 11px; letter-spacing: 3px;
   color: var(--gold-deep);
   text-transform: uppercase;
@@ -574,7 +574,7 @@ input[type="range"] {
   font-size: 13px;
 }
 .thread-leader-name {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-fraunces), serif;
   font-size: 15px; font-weight: 600;
   margin-bottom: 4px;
   color: var(--ink);
@@ -611,14 +611,14 @@ input[type="range"] {
 .metric-card.green { border-top-color: var(--green); }
 .metric-card.red { border-top-color: var(--red); }
 .metric-label {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 9px; letter-spacing: 2px;
   color: var(--ink-mute);
   text-transform: uppercase;
   margin-bottom: 6px;
 }
 .metric-value {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-fraunces), serif;
   font-size: 32px; font-weight: 600;
   color: var(--ink);
   line-height: 1;
@@ -639,7 +639,7 @@ input[type="range"] {
   color: var(--ink);
   padding: 12px 14px;
   text-align: left;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -664,14 +664,14 @@ input[type="range"] {
   color: var(--green);
   padding: 3px 10px; border-radius: 999px;
   font-size: 11px; font-weight: 700;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
 }
 .badge-no {
   background: rgba(181,63,63,0.10);
   color: var(--red);
   padding: 3px 10px; border-radius: 999px;
   font-size: 11px; font-weight: 700;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
 }
 .flip-tag {
   background: var(--gold);
@@ -679,7 +679,7 @@ input[type="range"] {
   padding: 2px 6px; border-radius: 3px;
   font-size: 9px; font-weight: 700;
   margin-left: 6px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   letter-spacing: 1px;
 }
 .rationale {
@@ -699,7 +699,7 @@ input[type="range"] {
   margin-bottom: 16px;
 }
 .curve-panel h4 {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 11px; letter-spacing: 3px;
   color: var(--gold-deep);
   text-transform: uppercase;

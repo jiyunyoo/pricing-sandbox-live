@@ -1,5 +1,27 @@
 import type { Metadata } from 'next';
+import { Noto_Sans_KR, Fraunces, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
+
+const notoSansKR = Noto_Sans_KR({
+  subsets: ['latin'],
+  weight: ['400', '500', '700', '900'],
+  variable: '--font-noto-sans-kr',
+  display: 'swap',
+});
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  weight: ['500', '700'],
+  variable: '--font-fraunces',
+  display: 'swap',
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-ibm-plex-mono',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: '호모 실리쿠스 · 페르소나 시뮬레이션 샌드박스',
@@ -12,15 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500;700;900&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="ko" className={`${notoSansKR.variable} ${fraunces.variable} ${ibmPlexMono.variable}`}>
       <body>{children}</body>
     </html>
   );

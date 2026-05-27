@@ -262,7 +262,7 @@ export default function Sandbox({ personas }: SandboxProps) {
                 <span style={{ color: 'var(--ink-mute)' }}>
                   {fmtKRW(activeProduct.basePrice)} → {fmtKRW(Math.round(activeProduct.basePrice * (1 + deltaPct / 100)))}
                 </span>
-                <div style={{ marginTop: 4, fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: 'var(--gold-deep)' }}>
+                <div style={{ marginTop: 4, fontFamily: 'var(--font-ibm-plex-mono), monospace', fontSize: 10, color: 'var(--gold-deep)' }}>
                   {activeProduct.goodType === 'search' ? '탐색재' : '경험재'} · {activeProduct.elasticityPrior}
                 </div>
               </div>
@@ -306,7 +306,7 @@ export default function Sandbox({ personas }: SandboxProps) {
         {loading && (
           <div className="loader-card">
             <div className="loader-spinner"></div>
-            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 16, color: 'var(--ink)' }}>
+            <div style={{ fontFamily: 'var(--font-fraunces), serif', fontSize: 16, color: 'var(--ink)' }}>
               {loaderStep === 'stage1' && '1차 의사결정 진행 중... (16명 × 2 가격조건)'}
               {loaderStep === 'discussion' && '커뮤니티 토론 생성 중... (오피니언 리더 + 댓글)'}
               {loaderStep === 'stage2' && '2차 의사결정 재평가 중... (토론 후 영향)'}
