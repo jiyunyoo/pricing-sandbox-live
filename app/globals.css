@@ -20,7 +20,7 @@
 html, body {
   background: var(--paper);
   color: var(--ink);
-  font-family: 'Pretendard', 'Apple SD Gothic Neo', system-ui, sans-serif;
+  font-family: 'Noto Sans KR', -apple-system, system-ui, sans-serif;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
