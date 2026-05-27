@@ -1,17 +1,10 @@
 import type { Metadata } from 'next';
-import { Fraunces, IBM_Plex_Mono } from 'next/font/google';
+import { IBM_Plex_Mono } from 'next/font/google';
 import '@fontsource/noto-sans-kr/400.css';
 import '@fontsource/noto-sans-kr/500.css';
 import '@fontsource/noto-sans-kr/700.css';
 import '@fontsource/noto-sans-kr/900.css';
 import './globals.css';
-
-const fraunces = Fraunces({
-  subsets: ['latin'],
-  weight: ['500', '700'],
-  variable: '--font-fraunces',
-  display: 'swap',
-});
 
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ['latin'],
@@ -31,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${fraunces.variable} ${ibmPlexMono.variable}`}>
+    <html lang="ko" className={ibmPlexMono.variable}>
       <body>{children}</body>
     </html>
   );

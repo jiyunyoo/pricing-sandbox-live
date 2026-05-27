@@ -31,7 +31,6 @@ button, input, select, textarea { font-family: inherit; color: inherit; }
 button { cursor: pointer; background: none; border: none; }
 
 .mono { font-family: var(--font-ibm-plex-mono), ui-monospace, SFMono-Regular, monospace; }
-.serif { font-family: var(--font-fraunces), 'Times New Roman', serif; }
 
 /* ── Header ───────────────────────────────────────── */
 .app-header {
@@ -235,7 +234,7 @@ main {
   color: var(--ink-mute); text-transform: uppercase;
 }
 .slider-value {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-noto-sans-kr);
   font-size: 28px; font-weight: 600;
   color: var(--gold-deep);
 }
@@ -619,7 +618,7 @@ input[type="range"] {
   margin-bottom: 6px;
 }
 .metric-value {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-noto-sans-kr);
   font-size: 32px; font-weight: 600;
   color: var(--ink);
   line-height: 1;
