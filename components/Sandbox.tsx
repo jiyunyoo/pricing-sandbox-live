@@ -3,7 +3,8 @@
 import { useMemo, useState } from 'react';
 import { avatarSVG } from '@/lib/avatars';
 import { PRODUCTS, SEARCH_PRODUCTS, EXPERIENCE_PRODUCTS, defaultProduct } from '@/lib/products';
-import { dominantValue, VALUE_LABELS } from '@/lib/personas';
+import { dominantValue } from '@/lib/personas';
+import { makeInstances, avatarPersona, type PersonaInstance } from '@/lib/instances';
 import type {
   Persona,
   ActiveProduct,
@@ -55,6 +56,9 @@ export default function Sandbox({ personas }: SandboxProps) {
   const [loaderStep, setLoaderStep] = useState<LoaderStep>('stage1');
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<SimulateResponse | null>(null);
+  const [selectedArchetype, setSelectedArchetype] = useState<Persona | null>(null);
+
+  const instances = useMemo(() => makeInstances(personas), [personas]);
 
   const activeProduct = useMemo<ActiveProduct | null>(() => {
     if (custom.enabled) {
@@ -324,28 +328,44 @@ export default function Sandbox({ personas }: SandboxProps) {
         {/* ── Results ── */}
         {result && <ResultsView result={result} personas={personas} />}
 
-        {/* ── Persona library ── */}
+        {/* ── Persona library: 2 instances per archetype, display-only ── */}
         <section className="persona-section">
-          <h2 className="section-title">페르소나 라이브러리</h2>
+          <h2 className="section-title">페르소나 라이브러리 — 32 instances (16 archetypes × 2)</h2>
           <p className="section-sub">
-            KOSTAT·BOK·KB 보고서 기반 4축 (세대 × 가구 × 경제력 × 가치관) 16개 아키타입.
-            각 페르소나는 OpenAI 시스템 프롬프트로 주입되어 자신의 인격으로 판단합니다.
+            KOSTAT·BOK·KB 보고서 기반 4축 (세대 × 가구 × 경제력 × 가치관) 16개 아키타입에서
+            각 2명을 샘플링했습니다 (소득 ±10%, 관심도 ±0.05 디스플레이 지터). 카드를 클릭하면 아키타입 상세가 열립니다.
+            <br />
+            <strong style={{ color: 'var(--ink-soft)' }}>주의:</strong> 시뮬레이션은 16개 아키타입 기준으로만 실행됩니다 — 이 32장은 디스플레이용입니다.
           </p>
           <div className="persona-grid">
-            {personas.map(p => (
-              <div key={p.id} className="persona-card">
-                <div className="avatar" dangerouslySetInnerHTML={{ __html: avatarSVG(p) }} />
-                <div className="persona-name">{p.name} <span style={{ fontWeight: 400, color: 'var(--ink-mute)', fontSize: 12 }}>· {p.age}</span></div>
-                <div className="persona-archetype">{p.archetype}</div>
-                <div className="persona-meta">
-                  {p.gen}세대 · {p.sex === 'M' ? '남' : '여'}<br />
-                  {p.household}
-                </div>
-                <div className="persona-value-tag">{dominantValue(p)}</div>
-              </div>
-            ))}
+            {instances.map(inst => {
+              const p = inst.archetype;
+              return (
+                <button
+                  key={`${p.id}-${inst.instanceIndex}`}
+                  className="persona-card persona-card-button"
+                  onClick={() => setSelectedArchetype(p)}
+                  aria-label={`${p.name} ${inst.label} 상세 보기`}
+                >
+                  <span className="instance-label">{inst.label}</span>
+                  <div className="avatar" dangerouslySetInnerHTML={{ __html: avatarSVG(avatarPersona(inst)) }} />
+                  <div className="persona-name">{p.name} <span style={{ fontWeight: 400, color: 'var(--ink-mute)', fontSize: 12 }}>· {p.age}</span></div>
+                  <div className="persona-archetype">{p.archetype}</div>
+                  <div className="persona-meta">
+                    {p.gen}세대 · {p.sex === 'M' ? '남' : '여'}<br />
+                    월 {Math.round(inst.jitteredIncome / 10000).toLocaleString()}만원
+                  </div>
+                  <div className="persona-value-tag">{dominantValue(p)}</div>
+                </button>
+              );
+            })}
           </div>
         </section>
+
+        {/* ── Archetype detail modal ── */}
+        {selectedArchetype && (
+          <ArchetypeModal persona={selectedArchetype} onClose={() => setSelectedArchetype(null)} />
+        )}
 
         <div className="footer-note">
           KAIST IMMS · 졸업 프로젝트 프로토타입 · powered by OpenAI gpt-4o-mini
@@ -482,6 +502,65 @@ function ResultsView({ result, personas }: { result: SimulateResponse; personas:
         </table>
       </div>
     </section>
+  );
+}
+
+// ── Archetype detail modal ────────────────────────────
+function ArchetypeModal({ persona, onClose }: { persona: Persona; onClose: () => void }) {
+  const valMap: Record<string, string> = { gaseong: '가성비', gasim: '가심비', meaning: '미닝아웃', brand: '브랜드 충성' };
+  return (
+    <div className="modal-backdrop" onClick={onClose} role="dialog" aria-modal="true">
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose} aria-label="닫기">×</button>
+        <div className="modal-header">
+          <div className="modal-avatar" dangerouslySetInnerHTML={{ __html: avatarSVG(persona) }} />
+          <div>
+            <div className="modal-name">{persona.name} ({persona.nameEn})</div>
+            <div className="modal-archetype">{persona.archetype} · {persona.gen}세대</div>
+            <div className="modal-bio">{persona.bio}</div>
+          </div>
+        </div>
+        <div className="detail-grid">
+          <div className="detail-block">
+            <h4>① Demographics</h4>
+            <div className="detail-row"><span>성별·연령</span><span>{persona.sex === 'M' ? '남' : '여'} · {persona.age}세</span></div>
+            <div className="detail-row"><span>거주지</span><span>{persona.region}</span></div>
+            <div className="detail-row"><span>가구</span><span>{persona.household}</span></div>
+            <div className="detail-row"><span>직업</span><span>{persona.occupation}</span></div>
+          </div>
+          <div className="detail-block red">
+            <h4>② Economics</h4>
+            <div className="detail-row"><span>월 소득 (아키타입 기준)</span><span>{persona.income.toLocaleString()}원</span></div>
+            <div className="detail-row"><span>저축률</span><span>{(persona.savings_rate * 100).toFixed(0)}%</span></div>
+            <div className="detail-row"><span>부채</span><span style={{ fontSize: 11 }}>{persona.debt}</span></div>
+          </div>
+          <div className="detail-block gold">
+            <h4>③ Values</h4>
+            {Object.entries(persona.values).map(([k, v]) => (
+              <div className="value-bar" key={k}>
+                <span className="value-bar-label">{valMap[k]}</span>
+                <span className="value-bar-track"><span className="value-bar-fill" style={{ width: `${v * 100}%` }} /></span>
+                <span className="value-bar-pct">{(v * 100).toFixed(0)}</span>
+              </div>
+            ))}
+          </div>
+          <div className="detail-block green">
+            <h4>④ Lifestyle</h4>
+            <div className="value-bar">
+              <span className="value-bar-label">모니터 관심</span>
+              <span className="value-bar-track"><span className="value-bar-fill" style={{ width: `${persona.lifestyle.monitor_interest * 100}%` }} /></span>
+              <span className="value-bar-pct">{(persona.lifestyle.monitor_interest * 100).toFixed(0)}</span>
+            </div>
+            <div className="value-bar">
+              <span className="value-bar-label">화장품 관심</span>
+              <span className="value-bar-track"><span className="value-bar-fill" style={{ width: `${persona.lifestyle.cosmetics_interest * 100}%` }} /></span>
+              <span className="value-bar-pct">{(persona.lifestyle.cosmetics_interest * 100).toFixed(0)}</span>
+            </div>
+          </div>
+        </div>
+        <div className="modal-sources">출처: {persona.sources}</div>
+      </div>
+    </div>
   );
 }
 
