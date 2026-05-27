@@ -1,0 +1,133 @@
+import type { Product } from './types';
+
+export const PRODUCTS: Product[] = [
+  // ── 탐색재 (Search goods — spec-comparable, price-sensitive) ──
+  {
+    id: 'monitor',
+    name: '27인치 1440p 모니터',
+    emoji: '🖥️',
+    goodType: 'search',
+    basePrice: 300000,
+    unit: '대',
+    priceSource: '다나와 평균가',
+    elasticityPrior: '탄력적 (스펙 비교 용이)',
+  },
+  {
+    id: 'laptop',
+    name: '보급형 노트북',
+    emoji: '💻',
+    goodType: 'search',
+    basePrice: 800000,
+    unit: '대',
+    priceSource: '다나와 평균가',
+    elasticityPrior: '탄력적 (대안 많음)',
+  },
+  {
+    id: 'phone',
+    name: '중급 스마트폰',
+    emoji: '📱',
+    goodType: 'search',
+    basePrice: 600000,
+    unit: '대',
+    priceSource: '다나와',
+    elasticityPrior: '중간 (브랜드 충성 일부)',
+  },
+  {
+    id: 'earbuds',
+    name: '무선 이어폰',
+    emoji: '🎧',
+    goodType: 'search',
+    basePrice: 150000,
+    unit: '세트',
+    priceSource: '다나와',
+    elasticityPrior: '탄력적 (스펙 비교 쉬움)',
+  },
+  {
+    id: 'fridge',
+    name: '가정용 냉장고',
+    emoji: '🧊',
+    goodType: 'search',
+    basePrice: 1200000,
+    unit: '대',
+    priceSource: '롯데하이마트',
+    elasticityPrior: '중간 (대형 가전, 비교 활발)',
+  },
+  {
+    id: 'chair',
+    name: '사무용 의자',
+    emoji: '🪑',
+    goodType: 'search',
+    basePrice: 200000,
+    unit: '개',
+    priceSource: '오늘의집',
+    elasticityPrior: '탄력적',
+  },
+  // ── 경험재 (Experience goods — must-try, brand/affect-driven) ──
+  {
+    id: 'ampoule',
+    name: '스킨케어 앰플 세트',
+    emoji: '🧴',
+    goodType: 'experience',
+    basePrice: 60000,
+    unit: '세트',
+    priceSource: '올리브영',
+    elasticityPrior: '비탄력적 (효능 체험 기반)',
+  },
+  {
+    id: 'lipstick',
+    name: '프리미엄 립스틱',
+    emoji: '💄',
+    goodType: 'experience',
+    basePrice: 45000,
+    unit: '개',
+    priceSource: '올리브영',
+    elasticityPrior: '비탄력적 (가심비)',
+  },
+  {
+    id: 'perfume',
+    name: '향수 50ml',
+    emoji: '🌸',
+    goodType: 'experience',
+    basePrice: 130000,
+    unit: '병',
+    priceSource: '백화점',
+    elasticityPrior: '비탄력적 (브랜드·후각)',
+  },
+  {
+    id: 'coffee',
+    name: '스페셜티 원두 구독',
+    emoji: '☕',
+    goodType: 'experience',
+    basePrice: 35000,
+    unit: '월',
+    priceSource: '구독 서비스',
+    elasticityPrior: '중간 (대체 가능)',
+  },
+  {
+    id: 'wine',
+    name: '와인 1병',
+    emoji: '🍷',
+    goodType: 'experience',
+    basePrice: 50000,
+    unit: '병',
+    priceSource: '와인숍',
+    elasticityPrior: '중간',
+  },
+  {
+    id: 'hotel',
+    name: '호텔 1박',
+    emoji: '🏨',
+    goodType: 'experience',
+    basePrice: 250000,
+    unit: '박',
+    priceSource: '여행 플랫폼',
+    elasticityPrior: '비탄력적 (경험·기념일)',
+  },
+];
+
+export const SEARCH_PRODUCTS = PRODUCTS.filter(p => p.goodType === 'search');
+export const EXPERIENCE_PRODUCTS = PRODUCTS.filter(p => p.goodType === 'experience');
+
+export function defaultProduct() {
+  return PRODUCTS[0]; // 27인치 모니터
+}
