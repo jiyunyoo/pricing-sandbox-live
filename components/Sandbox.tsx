@@ -330,12 +330,12 @@ export default function Sandbox({ personas }: SandboxProps) {
 
         {/* ── Persona library: 2 instances per archetype, display-only ── */}
         <section className="persona-section">
-          <h2 className="section-title">페르소나 라이브러리 — 32 instances (16 archetypes × 2)</h2>
+          <h2 className="section-title">페르소나 라이브러리 — 샘플 32명 / 전체 {(popPerArch * 16).toLocaleString()}명</h2>
           <p className="section-sub">
             KOSTAT·BOK·KB 보고서 기반 4축 (세대 × 가구 × 경제력 × 가치관) 16개 아키타입에서
-            각 2명을 샘플링했습니다 (소득 ±10%, 관심도 ±0.05 디스플레이 지터). 카드를 클릭하면 아키타입 상세가 열립니다.
+            각 2명을 우선 표시했습니다 (소득 ±10%, 관심도 ±0.05 디스플레이 지터). 카드를 클릭하면 아키타입 상세가 열립니다.
             <br />
-            <strong style={{ color: 'var(--ink-soft)' }}>주의:</strong> 시뮬레이션은 16개 아키타입 기준으로만 실행됩니다 — 이 32장은 디스플레이용입니다.
+            <strong style={{ color: 'var(--ink-soft)' }}>주의:</strong> 시뮬레이션은 16개 아키타입 기준으로만 실행됩니다 — 표시된 카드는 모집단의 일부입니다.
           </p>
           <div className="persona-grid">
             {instances.map(inst => {
@@ -359,6 +359,20 @@ export default function Sandbox({ personas }: SandboxProps) {
                 </button>
               );
             })}
+
+            {/* Ghost cards — visually suggest more personas exist beyond the displayed 32 */}
+            <div className="persona-card persona-card-ghost ghost-1" aria-hidden="true">
+              <div className="ghost-dots">···</div>
+            </div>
+            <div className="persona-card persona-card-ghost ghost-2" aria-hidden="true">
+              <div className="ghost-dots">···</div>
+            </div>
+            <div className="persona-card persona-card-ghost ghost-3" aria-hidden="true">
+              <div className="ghost-more">
+                + {Math.max(0, popPerArch * 16 - 32).toLocaleString()}명
+                <div className="ghost-more-sub">더 보기...</div>
+              </div>
+            </div>
           </div>
         </section>
 

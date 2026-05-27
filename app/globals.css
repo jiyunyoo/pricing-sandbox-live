@@ -348,6 +348,48 @@ input[type="range"] {
   border-radius: 4px;
 }
 
+/* Ghost / "more personas exist" cards at the end of the library */
+.persona-card-ghost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  border-style: dashed;
+  background: transparent;
+  pointer-events: none;
+  user-select: none;
+}
+.persona-card-ghost.ghost-1 { opacity: 0.55; }
+.persona-card-ghost.ghost-2 { opacity: 0.32; }
+.persona-card-ghost.ghost-3 {
+  opacity: 0.85;
+  border-color: var(--gold);
+  background: rgba(201, 169, 97, 0.04);
+}
+.ghost-dots {
+  font-family: var(--font-noto-sans-kr);
+  font-size: 32px;
+  color: var(--ink-mute);
+  letter-spacing: 4px;
+  line-height: 1;
+}
+.ghost-more {
+  text-align: center;
+  font-family: var(--font-noto-sans-kr);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gold-deep);
+}
+.ghost-more-sub {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--ink-mute);
+  font-weight: 500;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
 /* ── Modal ────────────────────────────────────────── */
 .modal-backdrop {
   position: fixed;
