@@ -593,14 +593,14 @@ function DemandCurve({ decisions, deltaPct, goodType }: { decisions: SimulateRes
         {[0, 0.25, 0.5, 0.75, 1].map(t => (
           <g key={t}>
             <line x1={padL} y1={y(t)} x2={W - padR} y2={y(t)} stroke="var(--line)" strokeDasharray="2 4" opacity="0.5" />
-            <text x={padL - 6} y={y(t) + 4} fontSize="10" fill="var(--ink-mute)" textAnchor="end" fontFamily="IBM Plex Mono">
+            <text x={padL - 6} y={y(t) + 4} fontSize="10" fill="var(--ink-mute)" textAnchor="end" fontFamily="var(--font-ibm-plex-mono)">
               {(t * 100).toFixed(0)}%
             </text>
           </g>
         ))}
         {/* axis labels */}
-        <text x={padL} y={H - 6} fontSize="10" fill="var(--ink-mute)" fontFamily="IBM Plex Mono">0%</text>
-        <text x={x(deltaPct)} y={H - 6} fontSize="10" fill="var(--ink-mute)" fontFamily="IBM Plex Mono" textAnchor="middle">
+        <text x={padL} y={H - 6} fontSize="10" fill="var(--ink-mute)" fontFamily="var(--font-ibm-plex-mono)">0%</text>
+        <text x={x(deltaPct)} y={H - 6} fontSize="10" fill="var(--ink-mute)" fontFamily="var(--font-ibm-plex-mono)" textAnchor="middle">
           {deltaPct >= 0 ? '+' : ''}{deltaPct}%
         </text>
         {/* fill area */}
@@ -610,10 +610,10 @@ function DemandCurve({ decisions, deltaPct, goodType }: { decisions: SimulateRes
         {/* points */}
         <circle cx={x(0)} cy={y(Q0)} r="5" fill={stroke} />
         <circle cx={x(deltaPct)} cy={y(Q1)} r="5" fill={stroke} />
-        <text x={x(0)} y={y(Q0) - 10} fontSize="11" fill={stroke} textAnchor="middle" fontFamily="IBM Plex Mono">
+        <text x={x(0)} y={y(Q0) - 10} fontSize="11" fill={stroke} textAnchor="middle" fontFamily="var(--font-ibm-plex-mono)">
           {(Q0 * 100).toFixed(0)}%
         </text>
-        <text x={x(deltaPct)} y={y(Q1) - 10} fontSize="11" fill={stroke} textAnchor="middle" fontFamily="IBM Plex Mono">
+        <text x={x(deltaPct)} y={y(Q1) - 10} fontSize="11" fill={stroke} textAnchor="middle" fontFamily="var(--font-ibm-plex-mono)">
           {(Q1 * 100).toFixed(0)}%
         </text>
       </svg>
