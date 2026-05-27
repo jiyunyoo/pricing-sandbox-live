@@ -370,7 +370,6 @@ export default function Sandbox({ personas }: SandboxProps) {
             <div className="persona-card persona-card-ghost ghost-3" aria-hidden="true">
               <div className="ghost-more">
                 + {Math.max(0, popPerArch * 16 - 32).toLocaleString()}명
-                <div className="ghost-more-sub">더 보기...</div>
               </div>
             </div>
           </div>

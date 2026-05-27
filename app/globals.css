@@ -380,15 +380,6 @@ input[type="range"] {
   font-weight: 700;
   color: var(--gold-deep);
 }
-.ghost-more-sub {
-  font-family: var(--font-ibm-plex-mono), monospace;
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--ink-mute);
-  font-weight: 500;
-  margin-top: 6px;
-  text-transform: uppercase;
-}
 
 /* ── Modal ────────────────────────────────────────── */
 .modal-backdrop {
