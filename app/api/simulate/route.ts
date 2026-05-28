@@ -189,7 +189,11 @@ export async function POST(request: Request) {
       ? mcnemar(decisions.map(d => d.stage1Priced), decisions.map(d => d.stage2 ?? d.stage1Priced))
       : { b: 0, c: 0, chi2: 0, significant: false };
 
-    const population = expandPopulation(decisions, Math.max(1, popPerArch));
+    // Guard against NaN / non-numeric popPerArch from client; cap at 64 so Bernoulli math stays cheap.
+    const safePopPerArch = Number.isFinite(popPerArch) && popPerArch > 0
+      ? Math.min(64, Math.floor(popPerArch))
+      : 20;
+    const population = expandPopulation(decisions, safePopPerArch);
 
     const response: SimulateResponse = {
       product, deltaPct, discussion,

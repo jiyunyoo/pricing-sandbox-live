@@ -52,6 +52,9 @@ export default function Sandbox({ personas }: SandboxProps) {
   const [deltaPct, setDeltaPct] = useState<number>(20);
   const [discussion, setDiscussion] = useState<boolean>(true);
   const [popPerArch, setPopPerArch] = useState<number>(20); // N=320 default
+  // Safe derived population multiplier — guards against NaN if state ever becomes corrupt.
+  const safePopPerArch = Number.isFinite(popPerArch) && popPerArch > 0 ? popPerArch : 20;
+  const totalPopulation = safePopPerArch * 16;
   const [loading, setLoading] = useState<boolean>(false);
   const [loaderStep, setLoaderStep] = useState<LoaderStep>('stage1');
   const [error, setError] = useState<string | null>(null);
@@ -101,17 +104,22 @@ export default function Sandbox({ personas }: SandboxProps) {
       }
     })();
 
+    const controller = new AbortController();
+    // Vercel serverless cap is 60s; abort slightly before so we surface our own friendly message.
+    const timeoutId = setTimeout(() => controller.abort(), 58_000);
+
     try {
       const body: SimulateRequest = {
         product: activeProduct,
         deltaPct,
         discussion,
-        popPerArch,
+        popPerArch: safePopPerArch,
       };
       const res = await fetch('/api/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+        signal: controller.signal,
       });
       const json = await res.json();
       if (!res.ok) {
@@ -124,8 +132,12 @@ export default function Sandbox({ personas }: SandboxProps) {
     } catch (e) {
       cancel = true;
       void ticker;
-      setError(e instanceof Error ? e.message : String(e));
+      const isAbort = e instanceof DOMException && e.name === 'AbortError';
+      setError(isAbort
+        ? '시뮬레이션이 시간 초과되었습니다 (60초). 토론을 끄거나 잠시 후 다시 시도해 주세요.'
+        : (e instanceof Error ? e.message : String(e)));
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   }
@@ -282,11 +294,14 @@ export default function Sandbox({ personas }: SandboxProps) {
 
             <div className="popselect">
               <span>인구 규모:</span>
-              <select value={popPerArch} onChange={e => setPopPerArch(parseInt(e.target.value, 10))}>
-                <option value={1}>N = 16 (archetypes only)</option>
-                <option value={10}>N = 160 (×10 expansion)</option>
-                <option value={20}>N = 320 (×20, default)</option>
-                <option value={32}>N = 512 (×32)</option>
+              <select
+                value={String(popPerArch)}
+                onChange={e => setPopPerArch(Number(e.target.value) || 20)}
+              >
+                <option value="1">N = 16 (archetypes only)</option>
+                <option value="10">N = 160 (×10 expansion)</option>
+                <option value="20">N = 320 (×20, default)</option>
+                <option value="32">N = 512 (×32)</option>
               </select>
             </div>
 
@@ -330,7 +345,7 @@ export default function Sandbox({ personas }: SandboxProps) {
 
         {/* ── Persona library: 2 instances per archetype, display-only ── */}
         <section className="persona-section">
-          <h2 className="section-title">페르소나 라이브러리 — 샘플 32명 / 전체 {(popPerArch * 16).toLocaleString()}명</h2>
+          <h2 className="section-title">페르소나 라이브러리 — 샘플 32명 / 전체 {totalPopulation.toLocaleString()}명</h2>
           <p className="section-sub">
             KOSTAT·BOK·KB 보고서 기반 4축 (세대 × 가구 × 경제력 × 가치관) 16개 아키타입에서
             각 2명을 우선 표시했습니다 (소득 ±10%, 관심도 ±0.05 디스플레이 지터). 카드를 클릭하면 아키타입 상세가 열립니다.
@@ -369,7 +384,7 @@ export default function Sandbox({ personas }: SandboxProps) {
             </div>
             <div className="persona-card persona-card-ghost ghost-3" aria-hidden="true">
               <div className="ghost-more">
-                + {Math.max(0, popPerArch * 16 - 32).toLocaleString()}명
+                + {Math.max(0, totalPopulation - 32).toLocaleString()}명
               </div>
             </div>
           </div>
