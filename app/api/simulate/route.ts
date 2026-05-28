@@ -136,6 +136,18 @@ export async function POST(request: Request) {
       stage1Priced: stage1[i].priced,
     }));
 
+    // Economic monotonicity for experience goods: a price increase must not recruit
+    // new buyers. If a persona didn't buy at base but bought at the higher price,
+    // that's stochastic LLM noise contradicting demand theory — reset to non-buy.
+    // (Search goods are left untouched: their elasticity behavior is fine.)
+    if (product.goodType === 'experience' && deltaPct > 0) {
+      for (const d of decisions) {
+        if (!d.stage1Base.buy && d.stage1Priced.buy) {
+          d.stage1Priced = { ...d.stage1Priced, buy: false };
+        }
+      }
+    }
+
     let thread: SimulateResponse['thread'] | undefined;
 
     if (discussion) {
