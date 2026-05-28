@@ -158,7 +158,7 @@ export default function Sandbox({ personas }: SandboxProps) {
           <h2>실시간 LLM 시뮬레이션</h2>
           <p>
             아래에서 제품을 선택(또는 직접 입력)하고 가격 변동률을 설정한 뒤 실행하세요.
-            16명의 페르소나 각자가 OpenAI에 별도로 호출되어 한국어로 의사결정을 추론하고, 선택적으로 커뮤니티 토론 단계 후 재결정합니다.
+            각 페르소나가 OpenAI에 별도로 호출되어 한국어로 의사결정을 추론하고, 선택적으로 커뮤니티 토론 단계 후 재결정합니다.
           </p>
         </div>
 
@@ -322,7 +322,7 @@ export default function Sandbox({ personas }: SandboxProps) {
           <div className="loader-card">
             <div className="loader-spinner"></div>
             <div style={{ fontFamily: 'var(--font-noto-sans-kr)', fontSize: 16, color: 'var(--ink)' }}>
-              {loaderStep === 'stage1' && '1차 의사결정 진행 중... (16명 × 2 가격조건)'}
+              {loaderStep === 'stage1' && '1차 의사결정 진행 중... (각 페르소나 × 2 가격조건)'}
               {loaderStep === 'discussion' && '커뮤니티 토론 생성 중... (오피니언 리더 + 댓글)'}
               {loaderStep === 'stage2' && '2차 의사결정 재평가 중... (토론 후 영향)'}
               {loaderStep === 'metrics' && '탄력성·WOM·McNemar 산출 중...'}
