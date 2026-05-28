@@ -24,70 +24,74 @@ export interface DecideRequest {
   comments?: { personaName: string; text: string }[];
 }
 
+/* Map ANY product to this persona's category interest (0..1).
+   Search goods → monitor-style spec interest; experience goods → cosmetics-style interest.
+   This is the key fix: without it, non-monitor/non-cosmetic products had no interest signal. */
+function productInterest(persona: Persona, product: ActiveProduct): number {
+  return product.goodType === 'search'
+    ? persona.lifestyle.monitor_interest
+    : persona.lifestyle.cosmetics_interest;
+}
+
+function dominantValueKR(persona: Persona): string {
+  const map: Record<string, string> = {
+    gaseong: '가성비', gasim: '가심비', meaning: '미닝아웃', brand: '브랜드 충성',
+  };
+  const top = Object.entries(persona.values).sort((a, b) => b[1] - a[1])[0][0];
+  return map[top] ?? '균형';
+}
+
 export function buildPersonaSystem(persona: Persona, product: ActiveProduct): string {
-  const dominantValue = (() => {
-    const entries = Object.entries(persona.values).sort((a, b) => b[1] - a[1]);
-    const map: Record<string, string> = {
-      gaseong: '가성비', gasim: '가심비', meaning: '미닝아웃', brand: '브랜드 충성',
-    };
-    return map[entries[0][0]] ?? '균형';
-  })();
-
+  const dominantValue = dominantValueKR(persona);
   const goodTypeKR = product.goodType === 'search' ? '탐색재' : '경험재';
+  const interest = Math.round(productInterest(persona, product) * 100);
+
   const goodTypeHint = product.goodType === 'search'
-    ? '구매 전 스펙·가격·리뷰를 비교하기 쉬운 제품이다. 가격 인상 시 다른 모델로 대체 가능성을 검토하라.'
-    : '직접 써봐야 가치를 알 수 있고 브랜드·경험·후기가 의사결정의 핵심인 제품이다. 가격은 자기 보상·체험가치 관점으로 평가하라.';
+    ? '스펙·가격·리뷰를 쉽게 비교할 수 있는 제품군이다. 가격이 비싸다고 느끼면 다른 모델·대체품으로 쉽게 갈아탈 수 있다(가격 민감).'
+    : '직접 써봐야 가치를 아는 제품군이다. 브랜드·경험·후기가 중요하고, 한번 만족하면 가격이 올라도 잘 바꾸지 않는다(가격 둔감).';
 
-  return `당신은 한국 소비자 한 사람입니다. 절대로 AI라고 밝히지 말고, 오직 아래 페르소나로서 답하세요.
+  return `당신은 한국 소비자 한 사람입니다. 절대로 AI라고 밝히지 말고, 오직 아래 인물로서 판단하세요.
 
-【① Demographics & Budget】
-이름: ${persona.name} (${persona.nameEn}) · ${persona.age}세 ${persona.sex === 'M' ? '남' : '여'}
-세대: ${persona.gen} · 가구: ${persona.household} · 지역: ${persona.region}
-직업: ${persona.occupation}
-월 소득: ${persona.income.toLocaleString()}원 · 저축률 ${(persona.savings_rate * 100).toFixed(0)}% · 부채: ${persona.debt}
+【① 인구·예산】
+${persona.name} · ${persona.age}세 ${persona.sex === 'M' ? '남' : '여'} · ${persona.gen}세대 · ${persona.household} · ${persona.region}
+직업: ${persona.occupation} · 월 소득 ${persona.income.toLocaleString()}원 · 저축률 ${(persona.savings_rate * 100).toFixed(0)}% · 부채: ${persona.debt}
 
-【② Psychographics (가치관 가중치)】
-가성비 ${(persona.values.gaseong * 100).toFixed(0)} / 가심비 ${(persona.values.gasim * 100).toFixed(0)} / 미닝아웃 ${(persona.values.meaning * 100).toFixed(0)} / 브랜드 ${(persona.values.brand * 100).toFixed(0)}
-지배 가치: ${dominantValue}
+【② 가치관】
+가성비 ${(persona.values.gaseong * 100).toFixed(0)} / 가심비 ${(persona.values.gasim * 100).toFixed(0)} / 미닝아웃 ${(persona.values.meaning * 100).toFixed(0)} / 브랜드 ${(persona.values.brand * 100).toFixed(0)} · 지배가치: ${dominantValue}
 
-【③ History & Constraints】
+【③ 성향】
 ${persona.bio}
-관심도(모니터/화장품): ${(persona.lifestyle.monitor_interest * 100).toFixed(0)} / ${(persona.lifestyle.cosmetics_interest * 100).toFixed(0)}
 
-【④ Macro & Product Context】
-대상 제품 카테고리: ${product.emoji} ${product.name} (${goodTypeKR})
+【④ 이 제품에 대한 태도】
+대상: ${product.emoji} ${product.name} (${goodTypeKR})
 ${goodTypeHint}
-가격 참고: ${product.priceSource} 기준
+이 카테고리에 대한 당신의 관심도: ${interest}/100  ← 0이면 평소 거의 안 사는 분야, 100이면 적극적으로 사는 분야
 
-원칙:
-- 한국어로만 답하라.
-- ${dominantValue} 가치관, 라이프스타일 관심도, 월 소득·부채를 종합적으로 고려해 자연스럽게 판단하라.
-- 가격 인상이 있어도 페르소나의 관심도가 높거나 브랜드·경험 가치가 충분하면 살 수도 있다. 반대로 평소 관심 없는 카테고리면 기본가에서도 안 살 수 있다.
-- 한국 소비자의 다양한 의사결정 패턴(즉시 포기·대체 모델 검토·할인까지 대기·그래도 구매)을 현실적으로 반영하라.
-- 다른 페르소나처럼 행동하지 말고 오직 위 인물로서 답하라.`;
+판단 원칙:
+- 핵심 질문은 "가격이 올랐나"가 아니라 "지금 이 가격이 나에게 이 제품을 살 만큼의 값어치가 있나"이다.
+- 관심도가 높고(예: 60 이상) 예산이 감당되면 기본적으로 산다. 관심도가 낮으면(예: 30 이하) 평소처럼 사지 않는다.
+- 가격이 부담되면: 탐색재는 더 싼 대체 모델을 적극 검토하고, 경험재는 브랜드·경험 가치로 어느 정도 감수한다.
+- 16명이 모두 같은 결정을 할 필요는 없다. 당신의 관심도·소득·가치관에 따라 솔직하게 다르게 판단하라.
+- 한국어로만, 오직 이 인물로서 답하라.`;
 }
 
 function buildDecideUser(req: DecideRequest): string {
   const { product, newPrice, seedPost, comments } = req;
-  const priceLine = `현재 시장가: ${newPrice.toLocaleString()}원/${product.unit}`;
+  const priceLine = `가격: ${newPrice.toLocaleString()}원 / ${product.unit}`;
 
   const discussion = seedPost
-    ? `\n\n【커뮤니티 토론】\n오피니언 리더 게시글: "${seedPost}"\n${(comments ?? []).map(c => `· ${c.personaName}: "${c.text}"`).join('\n')}\n\n토론을 보고 마음이 흔들렸을 수도, 그대로일 수도 있습니다. 솔직하게 다시 판단하세요.`
+    ? `\n\n【커뮤니티 토론】\n오피니언 리더: "${seedPost}"\n${(comments ?? []).map(c => `· ${c.personaName}: "${c.text}"`).join('\n')}\n\n이 토론을 본 뒤 마음이 바뀌었을 수도, 그대로일 수도 있습니다. 솔직하게 다시 판단하세요.`
     : '';
 
-  return `대상 제품: ${product.emoji} ${product.name}
+  return `${product.emoji} ${product.name}
 ${priceLine}${discussion}
 
-지금 이 페르소나의 입장에서 이 제품을 사겠습니까? 다음 가능성을 모두 열어두세요:
-- 관심도가 높고 자기 가치관에 맞으면 그대로 구매.
-- 가격이 부담스러우면 미루거나 대체재를 찾음.
-- 평소 관심 없는 카테고리면 기본가에서도 패스.
-모든 페르소나가 같은 결정을 할 필요는 없습니다.
+이 가격에 이 제품을 지금 사겠습니까? 당신의 관심도·예산·가치관에 비춰 솔직하게 판단하세요.
 
-JSON으로 응답:
-- buy: true/false
-- confidence: 1~5
-- rationale_cot: 한국어 한 문장 (최대 80자)`;
+JSON으로만 응답:
+- buy: true(산다) / false(안 산다)
+- confidence: 1~5 (확신 정도)
+- rationale_cot: 한국어 한 문장, 80자 이내`;
 }
 
 const decisionSchema = {
@@ -105,7 +109,7 @@ export async function callDecide(req: DecideRequest): Promise<Decision> {
   const completion = await client().chat.completions.create({
     model: MODEL,
     max_tokens: 400,
-    temperature: 1.1,
+    temperature: 0.9,
     messages: [
       { role: 'system', content: buildPersonaSystem(req.persona, req.product) },
       { role: 'user', content: buildDecideUser(req) },
@@ -119,7 +123,7 @@ export async function callDecide(req: DecideRequest): Promise<Decision> {
   const parsed = JSON.parse(raw);
   return {
     buy: Boolean(parsed.buy),
-    confidence: Math.max(1, Math.min(5, Number(parsed.confidence) | 0)),
+    confidence: Math.max(1, Math.min(5, Number(parsed.confidence) || 3)),
     rationale_cot: String(parsed.rationale_cot ?? '').slice(0, 160),
   };
 }
@@ -128,11 +132,12 @@ export async function callComment(req: DecideRequest, ctx: { seedPost: string; t
   const completion = await client().chat.completions.create({
     model: MODEL,
     max_tokens: 200,
+    temperature: 1.0,
     messages: [
       { role: 'system', content: buildPersonaSystem(req.persona, req.product) },
       {
         role: 'user',
-        content: `한국 커뮤니티 게시판에 다음 글이 올라왔습니다:\n"${ctx.seedPost}"\n\n${ctx.topic}\n\n페르소나의 말투로 짧게 120자 이내 한국어 댓글 하나만 작성하세요. 댓글 내용만, 따옴표나 접두어 없이.`,
+        content: `한국 커뮤니티 게시판에 다음 글이 올라왔습니다:\n"${ctx.seedPost}"\n\n${ctx.topic}\n\n페르소나의 말투로 120자 이내 한국어 댓글 하나만. 댓글 내용만, 따옴표·접두어 없이.`,
       },
     ],
   });
@@ -141,16 +146,17 @@ export async function callComment(req: DecideRequest, ctx: { seedPost: string; t
 
 export async function callSeedPost(persona: Persona, product: ActiveProduct, basePrice: number, newPrice: number, deltaPct: number, stance: 'skeptic' | 'advocate'): Promise<string> {
   const stanceHint = stance === 'skeptic'
-    ? '가격 인상에 회의적·비판적인 톤으로'
-    : '제품 가치를 지지하며 가격 인상이 정당하다는 톤으로';
+    ? '가격이 비싸다고 회의적·비판적인 톤으로'
+    : '제품 가치를 지지하며 이 가격도 살 만하다는 톤으로';
   const completion = await client().chat.completions.create({
     model: MODEL,
     max_tokens: 300,
+    temperature: 1.0,
     messages: [
       { role: 'system', content: buildPersonaSystem(persona, product) },
       {
         role: 'user',
-        content: `한국 커뮤니티(예: 디시·뽐뿌·올리브영 리뷰)에 ${stanceHint} 글을 한 단락만(최대 200자) 쓰세요. ${product.emoji} ${product.name}이 ${basePrice.toLocaleString()}원에서 ${newPrice.toLocaleString()}원(${deltaPct > 0 ? '+' : ''}${deltaPct}%)으로 변했습니다. 본문만, 제목·따옴표·자기소개 없이.`,
+        content: `한국 커뮤니티(디시·뽐뿌·올리브영 리뷰 등)에 ${stanceHint} 글을 한 단락(최대 200자) 쓰세요. ${product.emoji} ${product.name}이 ${newPrice.toLocaleString()}원입니다. 본문만, 제목·따옴표·자기소개 없이.`,
       },
     ],
   });
